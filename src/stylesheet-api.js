@@ -17,7 +17,7 @@ export class ServerStylesheet extends EventEmitter {
 
 	stringify(id) {
 		if (typeof id === 'undefined') {
-			return this.rules.map(r => this.stringify(r));
+			return this.rules.map(r => this.stringify(r)).join('\n');
 		}
 
 		const rule = typeof id === 'string'

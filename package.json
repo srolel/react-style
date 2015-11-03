@@ -9,7 +9,7 @@
     "watch:test:notify": "(cd build && mocha -w) | node notify.js",
     "dev": "concurrent \"babel src -w --out-dir build\" \"iron-node dev.js\"",
     "start": "babel src --out-dir build && webpack --config webpack.config.src.js && webpack --config webpack.config.min.js",
-    "patch-release": "git add . --all && git commit -m \"patch\" && npm version patch && npm publish"
+    "patch-release": "npm start && npm test && git add . --all && git commit -m \"patch\" && npm version patch && npm publish"
   },
   "author": "Sharon Rolel",
   "license": "ISC",

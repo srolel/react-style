@@ -11,9 +11,12 @@ const pickByRegex = (obj, regex) => {
 	return ret;
 };
 
-const hyphenateStyles = styleObj =>
-	Object.keys(styleObj).map(k =>
-		hyphenateStyleName(k) + ':' + styleObj[k]).join(';\n') + ';';
+const hyphenateStyles = styleObj => {
+	let styles = Object.keys(styleObj).map(k =>
+		hyphenateStyleName(k) + ':' + styleObj[k]).join(';\n');
+	styles = styles ? styles + ';' : '';
+	return styles;
+};
 
 const getBaseStyles = obj => pickByRegex(obj, /^[^:@]/);
 const getMediaStyles = obj => pickByRegex(obj, /^@/);
