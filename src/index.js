@@ -1,4 +1,4 @@
-import createStylesheet from './browser-styles.js';
+import createStylesheet from './server-styles.js';
 import reactribute from 'reactribute';
 import {extend} from './utils.js';
 
@@ -17,3 +17,5 @@ export default styles => {
 
 	return decorator;
 };
+
+export {stylesheets} from './server-styles.js';
