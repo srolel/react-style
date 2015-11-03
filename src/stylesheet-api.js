@@ -1,17 +1,6 @@
 import EventEmitter from 'tiny-emitter';
 import stringifyStyle from './stringify-style.js';
-import {extend} from './utils.js';
-
-const hash = obj => (!isObject(obj))
-	? obj
-	: `{
-	${Object.keys(obj)
-		.sort()
-		.reduce((acc, k) =>
-			acc.concat(`${k}:${hash(obj[k])}`)
-			, [])
-		.join(';')}
-	}`;
+import {extend, hash} from './utils.js';
 
 export class ServerStylesheet extends EventEmitter {
 	constructor({media, isGlobal} = {}) {
@@ -116,11 +105,3 @@ export class ServerStylesheet extends EventEmitter {
 export default (isServer) => {
 	return new ServerStylesheet();
 };
-
-// let pos, rule;
-
-		// const [rule, pos] = {
-		// 	1: args => [args[0], -1],
-		// 	2: args => [args[0], args[1]],
-		// 	3: args => [args[0] + '{' + args[1] + '}', args[2]]
-		// }[args.length];

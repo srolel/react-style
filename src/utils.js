@@ -9,4 +9,15 @@ export const extend = (...objs) => {
 		}
 	}
 	return ret;
-};
+}; 
+
+export const hash = obj => (!isObject(obj))
+	? obj
+	: `{
+	${Object.keys(obj)
+		.sort()
+		.reduce((acc, k) =>
+			acc.concat(`${k}:${hash(obj[k])}`)
+			, [])
+		.join(';')}
+	}`;
