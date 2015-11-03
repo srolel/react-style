@@ -12,7 +12,7 @@ describe('stylesheet API', () => {
 		expect(sheet.getRule('div')).to.deep.equal({
 			pos: -1,
 			rule: {color: 'red'},
-			className: 'c0',
+			className: 'c0-0',
 			sel: 'div'
 		});
 
@@ -22,7 +22,7 @@ describe('stylesheet API', () => {
 		expect(sheet.rules).to.deep.equal([sheet.keyedRules.div, sheet.keyedRules.span]);
 		expect(sheet.getRule('span')).to.deep.equal({
 			pos: -1,
-			className: 'c1',
+			className: 'c0-1',
 			rule: {color: 'blue'},
 			sel: 'span'
 		});
@@ -38,7 +38,7 @@ describe('stylesheet API', () => {
 		expect(sheet.rules[0]).to.equal(sheet.keyedRules.div);
 		expect(sheet.getRule('div')).to.deep.equal({
 			pos: 1,
-			className: 'c0',
+			className: 'c1-0',
 			rule: {color: 'red'},
 			sel: 'div'
 		});
@@ -63,7 +63,7 @@ describe('stylesheet API', () => {
 		expect(sheet.rules[0]).to.equal(sheet.keyedRules.span);
 		expect(sheet.getRule('span')).to.deep.equal({
 			pos: -1,
-			className: 'c2',
+			className: 'c2-2',
 			rule: {color: 'blue'},
 			sel: 'span'
 		});
@@ -79,7 +79,7 @@ describe('stylesheet API', () => {
 		expect(sheet).to.have.length(1);
 		expect(sheet.getRule('div')).to.deep.equal({
 			pos: -1,
-			className: 'c0',
+			className: 'c3-0',
 			rule: {color: 'red', background: 'blue'},
 			sel: 'div'
 		});
@@ -95,7 +95,7 @@ describe('stylesheet API', () => {
 		expect(sheet).to.have.length(1);
 		expect(sheet.getRule('div')).to.deep.equal({
 			pos: -1,
-			className: 'c0',
+			className: 'c4-0',
 			rule: {background: 'blue'},
 			sel: 'div'
 		});

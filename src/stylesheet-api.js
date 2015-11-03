@@ -3,11 +3,12 @@ import stringifyStyle from './stringify-style.js';
 import {extend, hash} from './utils.js';
 
 export class ServerStylesheet extends EventEmitter {
-	constructor({media, isGlobal} = {}) {
+	constructor({media, isGlobal, id} = {}) {
 		super();
 		this.keyedRules = {};
 		this.rules = [];
 		this.media = media;
+		this.id = id;
 		this.count = 0;
 	}
 
@@ -46,7 +47,7 @@ export class ServerStylesheet extends EventEmitter {
 	}
 
 	insertRule(sel, rule, pos = -1) {
-		const className = `c${this.count++}`;
+		const className = `c${this.id}-${this.count++}`;
 		const ruleObj = {rule, pos, sel, className};
 
 		this.rules.push(ruleObj);
@@ -101,7 +102,8 @@ export class ServerStylesheet extends EventEmitter {
 	}
 }
 
+let numStylesheets = 0;
 
 export default (isServer) => {
-	return new ServerStylesheet();
+	return new ServerStylesheet({id: numStylesheets++});
 };
