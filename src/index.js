@@ -1,4 +1,4 @@
-import createStylesheet from './server-styles.js';
+import createStylesheet from './create-stylesheet.js';
 import reactribute from 'reactribute';
 import {extend} from './utils.js';
 
