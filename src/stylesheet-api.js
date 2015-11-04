@@ -1,8 +1,8 @@
 import EventEmitter from 'tiny-emitter';
 import stringifyStyle from './stringify-style.js';
-import {extend, hash} from './utils.js';
+import {extend, getStyles} from './utils.js';
 
-export class ServerStylesheet extends EventEmitter {
+export class Stylesheet extends EventEmitter {
 	constructor({media, isGlobal, id} = {}) {
 		super();
 		this.keyedRules = {};
@@ -17,8 +17,12 @@ export class ServerStylesheet extends EventEmitter {
 	}
 
 	stringify(id) {
+		return this.getCSSRules(id).join('\n');
+	}
+
+	getCSSRules(id) {
 		if (typeof id === 'undefined') {
-			return this.rules.map(r => this.stringify(r)).join('\n');
+			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b));
 		}
 
 		const rule = typeof id === 'string'
@@ -48,11 +52,12 @@ export class ServerStylesheet extends EventEmitter {
 
 	insertRule(sel, rule, pos = -1) {
 		const className = `c${this.id}-${this.count++}`;
+		rule = getStyles(rule);
 		const ruleObj = {rule, pos, sel, className};
 
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;
-		
+
 		this.emit('insertRule', ruleObj);
 		return this;
 	}
@@ -87,6 +92,8 @@ export class ServerStylesheet extends EventEmitter {
 			throw new Error('trying to edit non-existing rule.');
 		}
 
+		newRule = getStyles(newRule);
+
 		if (replace) {
 			this.keyedRules[index].rule = newRule;
 		} else {
@@ -104,6 +111,6 @@ export class ServerStylesheet extends EventEmitter {
 
 let numStylesheets = 0;
 
-export default (isServer) => {
-	return new ServerStylesheet({id: numStylesheets++});
+export default () => {
+	return new Stylesheet({id: numStylesheets++});
 };
