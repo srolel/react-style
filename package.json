@@ -9,7 +9,8 @@
     "watch:test:notify": "(cd build && mocha -w) | node notify.js",
     "dev": "concurrent \"babel src -w --out-dir build\" \"iron-node dev.js\"",
     "start": "babel src --out-dir build && webpack --config webpack.config.src.js && webpack --config webpack.config.min.js",
-    "patch-release": "npm start && npm test && git add . --all && git commit -m \"patch\" && npm version patch && npm publish"
+    "patch-release": "npm start && npm test && git add . --all && git commit -m \"patch\" && npm version patch && npm publish",
+    "release-patch": "npm run patch-release"
   },
   "author": "Sharon Rolel",
   "license": "ISC",
@@ -31,6 +32,7 @@
     "react": "^0.14.0"
   },
   "dependencies": {
+    "detect-node": "^2.0.3",
     "hyphenate-style-name": "^1.0.0",
     "reactribute": "^0.1.2",
     "tiny-emitter": "^1.0.1"
