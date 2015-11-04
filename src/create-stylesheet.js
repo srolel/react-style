@@ -17,8 +17,10 @@ const createBrowserStylesheet = styles => {
 
 	const stylesheet = getStylesheet();
 
-	stylesheet.on('insertRule', r =>
-		sheet.insertRules(stylesheet.getCSSRules(r)));
+	stylesheet.on('insertRule', rule => {
+		const cssRules = stylesheet.getCSSRules(rule);
+		cssRules.forEach(r => sheet.insertRule(r));
+	});
 
 	stylesheet.addRules(styles);
 
