@@ -3,12 +3,13 @@ import stringifyStyle from './stringify-style.js';
 import {extend, getStyles} from './utils.js';
 
 export class Stylesheet extends EventEmitter {
-	constructor({media, isGlobal, id} = {}) {
+	constructor({media, id, verbatim} = {}) {
 		super();
 		this.keyedRules = {};
 		this.rules = [];
 		this.media = media;
 		this.id = id;
+		this.verbatim = verbatim;
 		this.count = 0;
 	}
 
@@ -51,9 +52,20 @@ export class Stylesheet extends EventEmitter {
 	}
 
 	insertRule(sel, rule, pos = -1) {
-		const className = `c${this.id}-${this.count++}`;
+
+		let className;
+		if (this.verbatim) {
+			className = sel.replace('.', '');
+		} else {
+			className = `c${this.id}-${this.count++}`;
+			if (process.ENV === 'development' || process.ENV === 'dev') {
+				className += `-${sel}`;
+			}
+		}
+
 		rule = getStyles(rule);
-		const ruleObj = {rule, pos, sel, className};
+		const numRules = Object.keys(rule).length;
+		const ruleObj = {rule, pos, sel, className, numRules};
 
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;
@@ -111,6 +123,6 @@ export class Stylesheet extends EventEmitter {
 
 let numStylesheets = 0;
 
-export default () => {
-	return new Stylesheet({id: numStylesheets++});
+export default (opts) => {
+	return new Stylesheet({id: numStylesheets++, ...opts});
 };
