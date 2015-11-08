@@ -1,4 +1,4 @@
-const isObject = x => typeof x === 'object';
+export const isObject = x => typeof x === 'object';
 
 export const extend = (...objs) => {
 	let ret = objs.shift(), firstRun = true;
@@ -31,21 +31,12 @@ export const hash = obj => (!isObject(obj))
 		.join(';')}
 	}`;
 
-export const pickByRegex = (obj, regex) => {
-	let ret = {};
-	for (let k in obj) {
-		if (obj.hasOwnProperty(k) && regex.test(k)) {
-			ret[k] = obj[k];
-		}
-	}
-	return ret;
+
+export const compose = (...fns) => {
+	const firstFn = fns[0];
+	fns = fns.slice(1);
+	return (...args) => {
+		const firstResult = firstFn(...args);
+		return fns.reduce((acc, fn) => fn(acc), firstResult);
+	};
 };
-
-export const getBaseStyles = obj => pickByRegex(obj, /^[^:@]/);
-export const getMediaStyles = obj => pickByRegex(obj, /^@/);
-export const getPseudoStyles = obj => pickByRegex(obj, /^:/);
-
-export const getStyles = rule => ({
-	'': getBaseStyles(rule),
-	...getPseudoStyles(rule)
-});
