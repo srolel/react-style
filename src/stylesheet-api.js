@@ -1,11 +1,18 @@
 import EventEmitter from 'tiny-emitter';
 import stringifyStyle from './stringify-style.js';
-import {extend, getStyles} from './utils.js';
+import {extend, compose} from './utils.js';
+import detectNode from 'detect-node';
+import defaultMiddleware from './transform-style-object';
 
 export class Stylesheet extends EventEmitter {
-	constructor({media, id, verbatim} = {}) {
+	constructor({media, id, verbatim, middleware} = {}) {
 		super();
 		this.keyedRules = {};
+
+		this.getStyles = middleware
+			? compose(defaultMiddleware, ...middleware)
+			: defaultMiddleware;
+
 		this.rules = [];
 		this.media = media;
 		this.id = id;
@@ -58,12 +65,13 @@ export class Stylesheet extends EventEmitter {
 			className = sel.replace('.', '');
 		} else {
 			className = `c${this.id}-${this.count++}`;
-			if (process.ENV === 'development' || process.ENV === 'dev') {
+			if (!detectNode) {
 				className += `-${sel}`;
 			}
 		}
 
-		rule = getStyles(rule);
+		rule = this.getStyles(rule);
+
 		const numRules = Object.keys(rule).length;
 		const ruleObj = {rule, pos, sel, className, numRules};
 
@@ -93,7 +101,6 @@ export class Stylesheet extends EventEmitter {
 
 	getRule(index) {
 		return this.keyedRules[index]
-			|| this.indexedRules[index]
 			|| null;
 	}
 
@@ -104,15 +111,15 @@ export class Stylesheet extends EventEmitter {
 			throw new Error('trying to edit non-existing rule.');
 		}
 
-		newRule = getStyles(newRule);
+		newRule = this.getStyles(newRule);
 
 		if (replace) {
-			this.keyedRules[index].rule = newRule;
+			rule.rule = newRule;
 		} else {
 			extend(rule.rule, newRule);
 		}
 
-		this.emit('editRule');
+		this.emit('editRule', rule);
 		return this;
 	}
 

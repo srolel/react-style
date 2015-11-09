@@ -2,7 +2,7 @@ import createStylesheet from './create-stylesheet.js';
 import reactribute from 'reactribute';
 import {extend} from './utils.js';
 
-export default (styles, opts) => {
+export default (styles, opts = {}) => {
 	const stylesheet = createStylesheet(styles, opts);
 	const decorator = reactribute(stylesheet.rules.map(r => ({
 		matcher: ({key, type, props}) => {
