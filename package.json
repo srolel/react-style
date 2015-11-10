@@ -32,7 +32,6 @@
     "react": "^0.14.0",
     "react-addons-test-utils": "^0.14.0",
     "react-dom": "^0.14.1",
-    "reactribute": "^0.1.14",
     "webpack": "^1.12.2"
   },
   "dependencies": {
