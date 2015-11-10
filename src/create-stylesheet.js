@@ -43,6 +43,10 @@ class StylesheetManager {
 
 const createBrowserStylesheet = (styles, opts) => {
 	const styleElement = document.createElement('style');
+
+	const {media = 'all'} = opts;
+	styleElement.media = media;
+
 	document.head.appendChild(styleElement);
 	const sheet = styleElement.sheet;
 
