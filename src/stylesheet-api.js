@@ -33,7 +33,7 @@ export class Stylesheet extends EventEmitter {
 
 	getCSSRules(id) {
 		if (typeof id === 'undefined') {
-			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b));
+			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b), []);
 		}
 
 		const rule = typeof id === 'string'
