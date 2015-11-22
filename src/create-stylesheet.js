@@ -22,7 +22,7 @@ class StylesheetManager {
 
 	insertRule(rule) {
 		const cssRules = this.stylesheet.getCSSRules(rule);
-		const {rules: {length}} = this.DOMSheet;
+		const {cssRules: {length}} = this.DOMSheet;
 		this.cache[rule.className] = [length, rule.numRules];
 		cssRules.forEach(r => this.DOMSheet.insertRule(r, length));
 	}
