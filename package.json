@@ -37,7 +37,7 @@
   "dependencies": {
     "detect-node": "^2.0.3",
     "hyphenate-style-name": "^1.0.0",
-    "reactribute": "^0.1.15",
+    "reactribute": "^0.1.18",
     "tiny-emitter": "^1.0.1"
   }
 }
