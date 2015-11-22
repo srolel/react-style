@@ -10,7 +10,7 @@
     "dev": "node index.js",
     "dev:iron": "iron-node index.js",
     "start": "babel src --out-dir build && webpack --config webpack.config.src.js && webpack --config webpack.config.min.js",
-    "patch-release": "npm start && npm test && git add . --all && git commit -m \"patch\" && npm version patch && npm publish",
+    "patch-release": "npm start && npm test && git add . --all && git commit -m \"patch\" && git pull && git push && npm version patch && npm publish",
     "release-patch": "npm run patch-release"
   },
   "author": "Sharon Rolel",

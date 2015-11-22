@@ -12,7 +12,6 @@ export const pickByRegex = (obj, regex) => {
 			ret[k] = obj[k];
 		}
 	}
-	console.log(ret)
 	return ret;
 };
 
