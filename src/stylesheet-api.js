@@ -25,12 +25,15 @@ export class Stylesheet extends EventEmitter {
 	}
 
 	stringify(id) {
-		return this.getCSSRules(id).join('\n');
+		const cssRules = this.getCSSRules(id);
+		return typeof id === 'undefined'
+			? cssRules.join('\n')
+			: cssRules;
 	}
 
 	getCSSRules(id) {
 		if (typeof id === 'undefined') {
-			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b));
+			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b), []);
 		}
 
 		const rule = typeof id === 'string'

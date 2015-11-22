@@ -1,7 +1,11 @@
 import hyphenateStyleName from 'hyphenate-style-name';
 import {isObject, compose} from './utils.js';
 
+// picks object properties matching a regex
 export const pickByRegex = (obj, regex) => {
+	if (!regex || !regex.test) {
+		throw new Error('second argument must be a regular expression');
+	}
 	let ret = {};
 	for (let k in obj) {
 		if (obj.hasOwnProperty(k) && regex.test(k)) {
