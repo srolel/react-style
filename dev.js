@@ -1,6 +1,5 @@
+require('babel-core/register');
 var chokidar = require('chokidar');
-// require('babel-polyfill');
-
 var path = require('path');
 
 var _invalidateRequireCacheForFile = function(mod) {
@@ -23,12 +22,12 @@ var requireNoCache = function(filePath) {
 };
 
 var rerun = function() {
-	requireNoCache('./build/node-index.js');
+	requireNoCache('./src/node-index.js');
 };
 
 rerun();
 
-var watcher = chokidar.watch('./build', {ignored: 'build/test/*.*'}).on('change', rerun)
+var watcher = chokidar.watch('./src', {ignored: 'src/test/*.*'}).on('change', rerun)
 
 setTimeout(function() {
 	watcher.on('add', rerun);
