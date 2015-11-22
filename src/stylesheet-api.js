@@ -27,13 +27,24 @@ export class Stylesheet extends EventEmitter {
 	stringify(id) {
 		const cssRules = this.getCSSRules(id);
 		return typeof id === 'undefined'
-			? cssRules.join('\n')
+			? this.wrapMedia(cssRules.join('\n'))
 			: cssRules;
 	}
 
+	wrapMedia(styles) {
+		return this.media
+			? `@media ${this.media} {
+					${styles}
+				}`
+			: styles;
+	}
+
 	getCSSRules(id) {
+
 		if (typeof id === 'undefined') {
-			return this.rules.map(r => this.stringify(r)).reduce((a, b) => a.concat(b), []);
+			return this.rules
+				.map(r => this.stringify(r))
+				.reduce((a, b) => a.concat(b), []);
 		}
 
 		const rule = typeof id === 'string'

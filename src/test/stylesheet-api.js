@@ -107,4 +107,22 @@ describe('stylesheet API', () => {
 		});
 	});
 
+	it('should stringify styles', () => {
+		const sheet = getStylesheet();
+
+		sheet.insertRule('div', {color: 'red', background: 'blue'});
+
+		const styleString = sheet.stringify();
+		expect(styleString.replace(/\s/g, '')).to.equal('.c5-0{color:red;background:blue;}')
+	});
+
+	it('should stringify styles with media queries', () => {
+		const sheet = getStylesheet({media: '(max-width: 1024px)'});
+
+		sheet.insertRule('div', {color: 'red', background: 'blue'});
+
+		const styleString = sheet.stringify();
+		expect(styleString.replace(/\s/g, '')).to.equal('@media(max-width:1024px){.c6-0{color:red;background:blue;}}')
+	});
+
 });
