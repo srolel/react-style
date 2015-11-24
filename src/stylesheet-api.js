@@ -1,7 +1,7 @@
 import EventEmitter from 'tiny-emitter';
 import stringifyStyle from './stringify-style.js';
 import {extend, compose} from './utils.js';
-import detectNode from 'detect-node';
+import isDev from './is-dev';
 import defaultMiddleware from './transform-style-object';
 
 export class Stylesheet extends EventEmitter {
@@ -79,7 +79,7 @@ export class Stylesheet extends EventEmitter {
 			className = sel.replace('.', '');
 		} else {
 			className = `c${this.id}-${this.count++}`;
-			if (!detectNode) {
+			if (isDev) {
 				className += `-${sel}`;
 			}
 		}
