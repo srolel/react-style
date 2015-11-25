@@ -41,11 +41,21 @@ class StylesheetManager {
 	}
 }
 
-const createBrowserStylesheet = (styles, opts) => {
-	const styleElement = document.createElement('style');
+const styleSheetCache = new Map();
 
-	if (opts.media) {
-		styleElement.media = opts.media;
+
+const createBrowserStylesheet = (styles, opts) => {
+
+	const {media} = opts;
+	let styleElement;
+	if (styleSheetCache.has(media)) {
+		styleElement = styleSheetCache.get(media);
+	} else {
+		styleElement = document.createElement('style');
+		if (media) {
+			styleElement.media = media;
+		}
+		styleSheetCache.set(media, styleElement);
 	}
 
 	document.head.appendChild(styleElement);
