@@ -1,79 +1,10 @@
 import detectNode from 'detect-node';
-import getStylesheet from './stylesheet-api.js';
+import StylesheetManager from './stylesheet-manager.js';
+import createServerStylesheet from './create-server-stylesheet.js';
+import createBrowserStylesheet from './create-browser-stylesheet.js';
 
-export const stylesheets = [];
-
-const createServerStylesheet = (styles, opts) => {
-	const sheet = getStylesheet(opts);
-	sheet.addRules(styles);
-	stylesheets.push(sheet);
-	return sheet;
-};
-
-class StylesheetManager {
-	constructor(DOMSheet, stylesheet) {
-		this.DOMSheet = DOMSheet;
-		this.stylesheet = stylesheet;
-		this.cache = {};
-		this.insertRule = this.insertRule.bind(this);
-		this.deleteRule = this.deleteRule.bind(this);
-		this.editRule = this.editRule.bind(this);
-	}
-
-	insertRule(rule) {
-		const cssRules = this.stylesheet.getCSSRules(rule);
-		const {cssRules: {length}} = this.DOMSheet;
-		this.cache[rule.className] = [length, rule.numRules];
-		cssRules.forEach(r => this.DOMSheet.insertRule(r, length));
-	}
-
-	deleteRule(key) {
-		key = key.className || key;
-		const [start, size] = this.cache[key];
-		for (let i = start, end = start + size; i < end; i++) {
-			this.DOMSheet.deleteRule(i);
-		}
-	}
-
-	editRule(rule) {
-		this.deleteRule(rule.className);
-		this.insertRule(rule);
-	}
-}
-
-const styleSheetCache = new Map();
-
-
-const createBrowserStylesheet = (styles, opts) => {
-
-	const {media} = opts;
-	let styleElement;
-	if (styleSheetCache.has(media)) {
-		styleElement = styleSheetCache.get(media);
-	} else {
-		styleElement = document.createElement('style');
-		if (media) {
-			styleElement.media = media;
-		}
-		styleSheetCache.set(media, styleElement);
-	}
-
-	document.head.appendChild(styleElement);
-	const sheet = styleElement.sheet;
-
-	const stylesheet = getStylesheet(opts);
-
-	const stylesheetManager = new StylesheetManager(sheet, stylesheet);
-
-	stylesheet
-		.on('insertRule', stylesheetManager.insertRule)
-		.on('editRule', stylesheetManager.editRule)
-		.on('deleteRule', stylesheetManager.deleteRule);
-
-	stylesheet.addRules(styles);
-
-	return stylesheet;
-};
+// this is exposed to access the rendered CSS. should be a better API like wrapping ReactDOM.Render on the server.
+export stylesheets from './create-server-stylesheet.js';
 
 export default (...args) => detectNode
 	? createServerStylesheet(...args)

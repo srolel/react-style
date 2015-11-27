@@ -1,4 +1,4 @@
-const hyphenateStyles = styleObj => {
+const stringifyStyleObject = styleObj => {
 	let styles = Object.keys(styleObj).map(k =>
 		k + ':' + styleObj[k]).join(';\n');
 	styles = styles ? styles + ';' : '';
@@ -8,6 +8,6 @@ const hyphenateStyles = styleObj => {
 export default ({rule, className}) => {
 	return Object.keys(rule).map(k =>
 		`.${className}${k} {
-			${hyphenateStyles(rule[k])}
+			${stringifyStyleObject(rule[k])}
 		}`);
 };
