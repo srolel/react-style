@@ -1,10 +1,19 @@
-import createStylesheet from './create-stylesheet.js';
+import createStylesheet, {stylesheets} from './create-stylesheet.js';
+import getStylesheetManager from './get-stylesheet-manager';
 import reactribute from 'reactribute';
 import {extend} from './utils.js';
 
 export default (styles, opts = {}) => {
 
+	const stylesheetManager = getStylesheetManager(opts);
 	const stylesheet = createStylesheet(styles, opts);
+
+	stylesheet
+		.on('insertRule', stylesheetManager.insertRule)
+		.on('editRule', stylesheetManager.editRule)
+		.on('deleteRule', stylesheetManager.deleteRule);
+
+	stylesheet.addRules(styles);
 
 	const decorator = reactribute(stylesheet.rules.map(r => ({
 		matcher: ({key, type, props}) => {
@@ -13,6 +22,8 @@ export default (styles, opts = {}) => {
 				|| props.className && props.className.split(' ').indexOf(r.sel) > -1;
 		},
 		fn({props}) {
+			// add to DOM here, where we know we are rendering it
+			stylesheetManager.appendToDOM(r);
 			const className = props.className || '';
 			return {props: extend({}, props, {className: `${className} ${r.className}`.trim()})};
 		}
@@ -22,5 +33,5 @@ export default (styles, opts = {}) => {
 	return decorator;
 };
 
-export {stylesheets} from './create-stylesheet.js';
+export {stylesheets as stylesheets};
 

@@ -1,7 +1,7 @@
 import EventEmitter from 'tiny-emitter';
-import stringifyStyle from './stringify-style.js';
 import {extend, compose, objectHash} from './utils.js';
 import defaultMiddleware from './transform-style-object';
+import Rule from './style-rule.js';
 
 export class Stylesheet extends EventEmitter {
 	constructor({media, id, verbatim, middleware} = {}) {
@@ -23,42 +23,8 @@ export class Stylesheet extends EventEmitter {
 		return this.rules.length;
 	}
 
-	stringify(id) {
-		const cssRules = this.getCSSRules(id);
-		return typeof id === 'undefined'
-			? this.wrapMedia(cssRules.join('\n'))
-			: cssRules;
-	}
-
-	wrapMedia(styles) {
-		return this.media
-			? `@media ${this.media} {
-					${styles}
-				}`
-			: styles;
-	}
-
-	getCSSRules(id) {
-
-		if (typeof id === 'undefined') {
-			return this.rules
-				.map(r => this.stringify(r))
-				.reduce((a, b) => a.concat(b), []);
-		}
-
-		const rule = typeof id === 'string'
-			? this.getRule(id)
-			: id;
-
-		return stringifyStyle(rule);
-	}
-
-	isSelector(index) {
-		return typeof index === 'string';
-	}
-
 	deleteRule(id) {
-		if (this.isSelector(id)) {
+		if (typeof id === 'string') {
 			const {index} = this.keyedRules[id];
 			delete this.keyedRules[id];
 			this.rules.splice(index, 1);
@@ -73,22 +39,10 @@ export class Stylesheet extends EventEmitter {
 
 	insertRule(sel, rule, pos = -1) {
 
-		let className;
-		if (this.verbatim) {
-			className = sel.replace('.', '');
-		} else {
-			const hash = objectHash(rule);
-			className = `c${hash}-${this.count++}-${sel}`;
-		}
-
-		rule = this.getStyles(rule);
-
-		const numRules = Object.keys(rule).length;
-		const ruleObj = {rule, pos, sel, className, numRules};
+		const ruleObj = new Rule(sel, rule, pos);
 
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;
-
 		this.emit('insertRule', ruleObj);
 		return this;
 	}
@@ -117,19 +71,7 @@ export class Stylesheet extends EventEmitter {
 
 	editRule(index, newRule, replace) {
 		const rule = this.getRule(index);
-
-		if (!rule) {
-			throw new Error('trying to edit non-existing rule.');
-		}
-
-		newRule = this.getStyles(newRule);
-
-		if (replace) {
-			rule.rule = newRule;
-		} else {
-			extend(rule.rule, newRule);
-		}
-
+		rule.update(newRule, replace);
 		this.emit('editRule', rule);
 		return this;
 	}

@@ -1,11 +1,10 @@
-import detectNode from 'detect-node';
-import StylesheetManager from './stylesheet-manager.js';
-import createServerStylesheet from './create-server-stylesheet.js';
-import createBrowserStylesheet from './create-browser-stylesheet.js';
+import getStylesheet from './stylesheet-api.js';
+import StylesheetManager from './stylesheet-manager';
+// ruleLengthCache a stylesheet for each media query. Not sure if this is actually useful but it feels more organized.
 
-// this is exposed to access the rendered CSS. should be a better API like wrapping ReactDOM.Render on the server.
-export stylesheets from './create-server-stylesheet.js';
+export default (styles, opts) => {
 
-export default (...args) => detectNode
-	? createServerStylesheet(...args)
-	: createBrowserStylesheet(...args);
+	const stylesheet = getStylesheet(opts);
+
+	return stylesheet;
+};

@@ -1,9 +1,9 @@
 export const isObject = x => typeof x === 'object';
 
-export const extend = (...objs) => {
-	let ret = objs.shift(), firstRun = true;
-	while (objs.length > 0) {
-		const obj = objs.pop();
+export const extend = (...objects) => {
+	let ret = objects.shift(), firstRun = true;
+	while (objects.length > 0) {
+		const obj = objects.pop();
 		for (var k in obj) {
 			if ((firstRun || !(k in ret)) && obj.hasOwnProperty(k)) {
 				const objProp = obj[k];
