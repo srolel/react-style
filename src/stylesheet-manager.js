@@ -1,4 +1,3 @@
-import appendCssRuleToDom from './append-css-rule-to-dom';
 /**
  * Manages the browser stylesheet elements and server style strings
  */
@@ -6,14 +5,14 @@ export default class StylesheetManager {
 	/**
 	 *
 	 * @param DOMStyleElement a DOM style element
-	 * @param stylesheet a Stylesheet instance
-	 * @param opts {append, cache, media}
+	 * @param opts {append, cache, media, parser}
      */
 	
 	static defaultOpts = {
 		append: false,
 		cache: true,
-		media: null
+		media: null,
+		parser: null
 	};
 
 	constructor(DOMStyleElement, opts) {
@@ -27,26 +26,8 @@ export default class StylesheetManager {
 		this.editRule = this.editRule.bind(this);
 	}
 	
-	getRule(id) {
+	getCachedRule(id) {
 		return typeof id === 'string' ? this.keyedRules[id] : id;
-	}
-
-	ruleArrayToString(arr) {
-		return this.wrapMedia(arr.join('\n'));
-	}
-
-	stringify(id) {
-		
-		if (typeof id === 'undefined') {
-			return this.ruleArrayToString(this.rules);
-		}
-		
-		const cssRules = this.getRule(id);
-		return this.ruleArrayToString(cssRules);
-	}
-
-	parseRule(rule) {
-		return rule.parse();
 	}
 
 	wrapMedia(styles) {
@@ -65,9 +46,9 @@ export default class StylesheetManager {
 	}
 
 	appendToDOM(rule) {
-		rule = this.getRule(rule);
-		rule.parse();
-		rule.appendToDOM(this.DOMStyleElement);
+		rule = this.getCachedRule(rule);
+		rule.parse(this.opts.parser);
+		rule.appendTo(this.DOMStyleElement);
 	}
 
 	deleteRule(key) {

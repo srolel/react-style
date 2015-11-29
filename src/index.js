@@ -1,9 +1,17 @@
-import createStylesheet, {stylesheets} from './create-stylesheet.js';
-import getStylesheetManager from './get-stylesheet-manager';
+import createStylesheet from './create-stylesheet.js';
+import getStylesheetManager, {stylesheetManagerCache} from './get-stylesheet-manager';
 import reactribute from 'reactribute';
 import {extend} from './utils.js';
 
-export default (styles, opts = {}) => {
+const checkOpts = opts => {
+	opts.media = opts.media.replace(/^@media /, '');
+}
+
+const reactStyles = (styles, opts = {}) => {
+
+	checkOpts(opts);
+
+	opts = {...reactStyles.opts, ...opts};
 
 	const stylesheetManager = getStylesheetManager(opts);
 	const stylesheet = createStylesheet(styles, opts);
@@ -17,8 +25,7 @@ export default (styles, opts = {}) => {
 
 	const decorator = reactribute(stylesheet.rules.map(r => ({
 		matcher: ({key, type, props}) => {
-			return r.sel === key
-				|| r.sel === type
+			return r.sel === type
 				|| props.className && props.className.split(' ').indexOf(r.sel) > -1;
 		},
 		fn({props}) {
@@ -33,5 +40,15 @@ export default (styles, opts = {}) => {
 	return decorator;
 };
 
-export {stylesheets as stylesheets};
+reactStyles.config = opts => reactStyles.opts = opts;
+
+reactStyles.getSheetsAsString = () =>
+	Object.keys(stylesheetManagerCache)
+		.map(media =>
+			stylesheetManagerCache[media].DOMStyleElement.outerHTML)
+		.join('');
+
+export default reactStyles;
+
+export {stylesheetManagerCache as stylesheets};
 

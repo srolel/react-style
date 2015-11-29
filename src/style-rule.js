@@ -1,5 +1,6 @@
+import appendCssRuleToDom from './append-css-rule-to-dom';
 import stringifyRule from './stringify-style';
-import {objectHash} from './utils';
+import {objectHash, extend} from './utils';
 
 export default class Rule {
     constructor(sel, rule ,pos = -1) {
@@ -11,11 +12,25 @@ export default class Rule {
             className = `c${hash}-${sel}`;
         }
 
-        const numRules = Object.keys(rule).length;
-        return {rule, pos, sel, className, numRules};
+        extend(this, {rule, pos, sel, className})
     }
 
     stringify() {
-        return stringifyRule(this);
+        if (!this._parsed) {
+            this._parsed = this.parse(parser);
+        }
+        console.log(this._parsed)
+        return stringifyRule(this._parsed);
+    }
+
+    parse(parser) {
+        const ruleToParse = {[this.className]: this.rule};
+        this._parsed = parser ? parser(ruleToParse) : ruleToParse;
+        this.numRules = Object.keys(this._parsed).length;
+    }
+
+    appendTo(sheet, parser) {
+        const cssString = this.stringify();
+        appendCssRuleToDom(sheet, cssString);
     }
 }

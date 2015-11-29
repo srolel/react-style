@@ -1,16 +1,11 @@
 import EventEmitter from 'tiny-emitter';
 import {extend, compose, objectHash} from './utils.js';
-import defaultMiddleware from './transform-style-object';
 import Rule from './style-rule.js';
 
 export class Stylesheet extends EventEmitter {
-	constructor({media, id, verbatim, middleware} = {}) {
+	constructor({media, id, verbatim} = {}) {
 		super();
 		this.keyedRules = {};
-
-		this.getStyles = middleware
-			? compose(defaultMiddleware, ...middleware)
-			: defaultMiddleware;
 
 		this.rules = [];
 		this.media = media;

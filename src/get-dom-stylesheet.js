@@ -1,8 +1,10 @@
+import DOMStylesheetMock from './dom-stylesheet-mock';
+
 const styleSheetCache = {};
 
 export default (media) => {
 	if (typeof document === 'undefined') {
-		return;
+		return new DOMStylesheetMock(media);
 	}
 
 	let styleElement = styleSheetCache[media];
