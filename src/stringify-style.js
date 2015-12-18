@@ -1,13 +1,24 @@
-const hyphenateStyles = styleObj => {
-	let styles = Object.keys(styleObj).map(k =>
-		k + ':' + styleObj[k]).join(';\n');
+import hyphenateStyleName from 'hyphenate-style-name';
+import {isObject} from './utils.js';
+
+const stringifyStyleObject = styleObj => {
+
+	let styles = Object.keys(styleObj)
+		.map(k => hyphenateStyleName(k) + ':' + styleObj[k])
+		.join(';');
+
 	styles = styles ? styles + ';' : '';
 	return styles;
 };
 
-export default ({rule, className}) => {
-	return Object.keys(rule).map(k =>
-		`.${className}${k} {
-			${hyphenateStyles(rule[k])}
-		}`);
-};
+const isMedia = str => str.indexOf('@') === 0;
+
+const stringifyStyle = rule =>
+	Object.keys(rule).map(k => 
+		`${k} {
+			${isMedia(k) 
+				? stringifyStyle(rule[k])
+				: stringifyStyleObject(rule[k])}
+		}`).join('');
+
+export default stringifyStyle;

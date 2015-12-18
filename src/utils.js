@@ -1,9 +1,9 @@
 export const isObject = x => typeof x === 'object';
 
-export const extend = (...objs) => {
-	let ret = objs.shift(), firstRun = true;
-	while (objs.length > 0) {
-		const obj = objs.pop();
+export const extend = (...objects) => {
+	let ret = objects.shift(), firstRun = true;
+	while (objects.length > 0) {
+		const obj = objects.pop();
 		for (var k in obj) {
 			if ((firstRun || !(k in ret)) && obj.hasOwnProperty(k)) {
 				const objProp = obj[k];
@@ -40,3 +40,18 @@ export const compose = (...fns) => {
 		return fns.reduce((acc, fn) => fn(acc), firstResult);
 	};
 };
+
+
+const stringHash = str => {
+	var hash = 0;
+	if (str.length === 0) {
+		return hash;
+	}
+	for (let i = 0; i < str.length; i++) {
+		hash = ((hash << 5) - hash) + str.charCodeAt(i);
+		hash = hash & hash; // Convert to 32bit integer
+	}
+	return hash;
+};
+
+export const objectHash = obj => stringHash(JSON.stringify(obj));

@@ -12,12 +12,12 @@ var _invalidateRequireCacheForFile = function(mod) {
 		mod.children.forEach(_invalidateRequireCacheForFile);
 	}
 
-	delete require.cache[mod.filename];
+	delete require.ruleLengthCache[mod.filename];
 };
 
 var requireNoCache = function(filePath) {
 	var resolved = path.resolve(filePath);
-	_invalidateRequireCacheForFile(require.cache[resolved]);
+	_invalidateRequireCacheForFile(require.ruleLengthCache[resolved]);
 	return require(filePath);
 };
 
