@@ -1,6 +1,8 @@
 import DOMStylesheetMock from './dom-stylesheet-mock';
 
-const styleSheetCache = {};
+let styleSheetCache = {};
+
+export const clearCache = () => styleSheetCache = {};
 
 export default (media) => {
 	if (typeof document === 'undefined') {
@@ -17,6 +19,5 @@ export default (media) => {
 		styleSheetCache[media] = styleElement;
 		document.head.appendChild(styleElement);
 	}
-
 	return styleElement;
 };

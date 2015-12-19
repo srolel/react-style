@@ -3,7 +3,9 @@ import StylesheetManager from './stylesheet-manager';
 import getDOMStylesheet from './get-dom-stylesheet';
 // ruleLengthCache a stylesheet for each media query. Not sure if this is actually useful but it feels more organized.
 
-export const stylesheetManagerCache = {};
+export let stylesheetManagerCache = {};
+
+export const clearCache = () => stylesheetManagerCache = {};
 
 export default (opts) => {
 	const {media} = opts;

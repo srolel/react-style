@@ -2,18 +2,18 @@
  * Manages the browser stylesheet elements and server style strings
  */
 export default class StylesheetManager {
-	/**
-	 *
-	 * @param DOMStyleElement a DOM style element
-	 * @param opts {append, cache, media, parser}
-     */
-	
+
 	static defaultOpts = {
 		append: false,
 		cache: true,
 		media: null,
 		parser: null
 	};
+
+	/**
+	 * @param DOMStyleElement a DOM style element
+	 * @param opts {append, cache, media, parser}
+     */
 
 	constructor(DOMStyleElement, opts) {
 		this.DOMStyleElement = DOMStyleElement;
@@ -25,9 +25,9 @@ export default class StylesheetManager {
 		this.deleteRule = this.deleteRule.bind(this);
 		this.editRule = this.editRule.bind(this);
 	}
-	
+
 	getCachedRule(id) {
-		return typeof id === 'string' ? this.keyedRules[id] : id;
+		return typeof id === 'object' ? id : this.keyedRules[id];
 	}
 
 	wrapMedia(styles) {
@@ -42,13 +42,28 @@ export default class StylesheetManager {
 	insertRule(rule, opts = this.opts) {
 		// save so we know what to delete if this#deleteRule is called
 		const {cssRules: {length}} = this.DOMStyleElement.sheet;
+		this.rules.push(rule);
 		this.ruleLengthCache[rule.className] = [length, rule.numRules];
+
+		const cachedRule = this.getCachedRule(rule.hash);
+
+		let className;
+		if (cachedRule) {
+			className = cachedRule.incSpec(rule.className);
+		} else {
+			this.keyedRules[rule.hash] = rule;
+			className = rule.className;
+		}
+
+		return className;
 	}
 
 	appendToDOM(rule) {
 		rule = this.getCachedRule(rule);
-		rule.parse(this.opts.parser);
-		rule.appendTo(this.DOMStyleElement);
+		if (!rule.appended) {
+			rule.parse(this.opts.parser);
+			rule.appendTo(this.DOMStyleElement);
+		}
 	}
 
 	deleteRule(key) {

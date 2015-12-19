@@ -1,5 +1,4 @@
 import hyphenateStyleName from 'hyphenate-style-name';
-import {isObject} from './utils.js';
 
 const stringifyStyleObject = styleObj => {
 

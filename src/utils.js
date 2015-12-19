@@ -20,18 +20,6 @@ export const extend = (...objects) => {
 	return ret;
 };
 
-export const hash = obj => (!isObject(obj))
-	? obj
-	: `{
-	${Object.keys(obj)
-		.sort()
-		.reduce((acc, k) =>
-			acc.concat(`${k}:${hash(obj[k])}`)
-			, [])
-		.join(';')}
-	}`;
-
-
 export const compose = (...fns) => {
 	const firstFn = fns[0];
 	fns = fns.slice(1);
@@ -43,7 +31,7 @@ export const compose = (...fns) => {
 
 
 const stringHash = str => {
-	var hash = 0;
+	let hash = 0;
 	if (str.length === 0) {
 		return hash;
 	}
@@ -54,4 +42,18 @@ const stringHash = str => {
 	return hash;
 };
 
-export const objectHash = obj => stringHash(JSON.stringify(obj));
+const sortObject = obj => {
+	const sorted = Object.create(null);
+	const keys = Object.keys(obj).sort();
+	for (let i = 0, len = keys.length; i < len; i++) {
+		const k = keys[i];
+		const prop = obj[k];
+		sorted[k] = typeof prop === 'object'
+			? sortObject(prop)
+			: prop;
+	}
+	return sorted;
+};
+
+export const objectHash = obj => stringHash(JSON.stringify(sortObject(obj)));
+

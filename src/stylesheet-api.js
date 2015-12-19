@@ -1,16 +1,15 @@
 import EventEmitter from 'tiny-emitter';
-import {extend, compose, objectHash} from './utils.js';
 import Rule from './style-rule.js';
 
 export class Stylesheet extends EventEmitter {
-	constructor({media, id, verbatim} = {}) {
+	constructor({media, id, ...ruleOpts} = {}) {
 		super();
 		this.keyedRules = {};
 
 		this.rules = [];
 		this.media = media;
 		this.id = id;
-		this.verbatim = verbatim;
+		this.ruleOpts = ruleOpts;
 		this.count = 0;
 	}
 
@@ -34,7 +33,7 @@ export class Stylesheet extends EventEmitter {
 
 	insertRule(sel, rule, pos = -1) {
 
-		const ruleObj = new Rule(sel, rule, pos);
+		const ruleObj = new Rule(sel, rule, pos, this.ruleOpts);
 
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;

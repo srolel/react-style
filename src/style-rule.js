@@ -3,34 +3,56 @@ import stringifyRule from './stringify-style';
 import {objectHash, extend} from './utils';
 
 export default class Rule {
-    constructor(sel, rule ,pos = -1) {
-        let className;
-        if (this.verbatim) {
+    constructor(sel, rule ,pos = -1, opts = {}) {
+        let className, hash, spec = 0;
+        if (opts.verbatim) {
             className = sel.replace('.', '');
         } else {
-            const hash = objectHash(rule);
+            hash = opts.noHash ? '' : objectHash(rule);
             className = `c${hash}-${sel}`;
+            if (opts.scope) {
+                className += `-${opts.scope}`;
+            }
         }
 
-        extend(this, {rule, pos, sel, className})
+        extend(this, {rule, pos, sel, className, hash, spec});
     }
 
-    stringify() {
+    // increase specificity and return the added specific className
+    incSpec(className) {
+        this.classList = this.classList || [this.className];
+
+        if (this.classList.indexOf(className) > -1) {
+            this.spec++;
+            className = className + this.spec;
+        }
+
+        this.classList.push(className);
+
+        return className;
+
+    }
+
+    stringify(parser) {
         if (!this._parsed) {
             this._parsed = this.parse(parser);
         }
-        console.log(this._parsed)
         return stringifyRule(this._parsed);
     }
 
     parse(parser) {
-        const ruleToParse = {[this.className]: this.rule};
+        const className = this.classList
+            ? this.className = this.classList.join(',')
+            : this.className;
+
+        const ruleToParse = {[className]: this.rule};
         this._parsed = parser ? parser(ruleToParse) : ruleToParse;
         this.numRules = Object.keys(this._parsed).length;
     }
 
-    appendTo(sheet, parser) {
+    appendTo(sheet) {
         const cssString = this.stringify();
+        this.appended = true;
         appendCssRuleToDom(sheet, cssString);
     }
 }
