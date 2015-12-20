@@ -1,11 +1,14 @@
 import appendCssRuleToDom from './append-css-rule-to-dom';
 import stringifyRule from './stringify-style';
-import {objectHash, extend} from './utils';
+import objectHash from './object-hash';
+import extend from 'lodash/object/assign';
+import Hooker from '../utils/hooker';
 
-export default class Rule {
+export default class Rule extends Hooker {
     constructor(sel, rule ,pos = -1, opts = {}) {
+        super();
         let className, hash, spec = 0;
-        if (opts.verbatim) {
+        if (opts.global) {
             className = sel.replace('.', '');
         } else {
             hash = opts.noHash ? '' : objectHash(rule);
@@ -17,6 +20,12 @@ export default class Rule {
 
         extend(this, {rule, pos, sel, className, hash, spec});
     }
+
+    // get className() {
+    //     return this.composed
+    //         ? this.composed.concat(this.className).join(' ')
+    //         : this.className;
+    // }
 
     // increase specificity and return the added specific className
     incSpec(className) {
@@ -30,7 +39,12 @@ export default class Rule {
         this.classList.push(className);
 
         return className;
+    }
 
+    compose(rule) {
+        this.composed = this.composed || [];
+        const className = rule.className || rule;
+        this.composed.push(className);
     }
 
     stringify(parser) {
@@ -40,12 +54,21 @@ export default class Rule {
         return stringifyRule(this._parsed);
     }
 
-    parse(parser) {
+    getRuleToParse() {
         const className = this.classList
             ? this.className = this.classList.join(',')
             : this.className;
 
         const ruleToParse = {[className]: this.rule};
+
+        return ruleToParse;
+
+    }
+
+    parse(parser) {
+        
+        const ruleToParse = this.getRuleToParse();
+
         this._parsed = parser ? parser(ruleToParse) : ruleToParse;
         this.numRules = Object.keys(this._parsed).length;
     }

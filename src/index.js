@@ -1,6 +1,7 @@
-import createStylesheet from './create-stylesheet.js';
-import getStylesheetManager, {stylesheetManagerCache} from './get-stylesheet-manager';
+import createStylesheet from './stylesheet-api/create-stylesheet.js';
+import getStylesheetManager, {stylesheetManagerCache} from './stylesheet-manager/get-stylesheet-manager';
 import reactribute from 'reactribute';
+import serverSideRenderTransform from './utils/server-side-render-transform.js';
 
 const checkOpts = opts => {
 	if (opts.media) {
@@ -9,27 +10,27 @@ const checkOpts = opts => {
 	return opts;
 };
 
-// possible opts: {media, scope, verbatim}
+// possible opts: {media, scope, global}
 
 const reactStyles = (styles, opts = {}) => {
+
 
 	opts = {...reactStyles.opts, ...checkOpts(opts)};
 
 	const stylesheetManager = getStylesheetManager(opts);
 	const stylesheet = createStylesheet(styles, opts);
 
-	const rules = [];
-
-	stylesheet
-		.on('insertRule', rule =>
-			rules.push({
-				hash: rule.hash,
-				sel: rule.sel,
-				className: stylesheetManager.insertRule(rule)
-			})
-		);
-
 	stylesheet.addRules(styles);
+
+	const rules = stylesheet.rules.map(rule => ({
+		hash: rule.hash,
+		sel: rule.sel,
+		className: stylesheetManager.insertRule(rule)
+	}));
+
+	if (opts.renderServerStyles) {
+		serverSideRenderTransform(rules);
+	}
 
 	const decorator = reactribute(rules.map(r => ({
 		matcher: ({key, type, props}) => {

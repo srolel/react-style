@@ -47,6 +47,7 @@ export default class StylesheetManager {
 
 		const cachedRule = this.getCachedRule(rule.hash);
 
+		// TODO: make this kind of thing middleware?
 		let className;
 		if (cachedRule) {
 			className = cachedRule.incSpec(rule.className);

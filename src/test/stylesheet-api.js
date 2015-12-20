@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import getStylesheet from '../stylesheet-api.js';
+import getStylesheet from '../stylesheet-api/stylesheet-api.js';
 
 // TODO: these tests are old and semi-deprecated.
 // invalid tests that test capabilities that were deprecated are commended out.
@@ -12,7 +12,7 @@ describe('stylesheet API', () => {
 
 		expect(sheet).to.have.length(1);
 		expect(sheet.rules[0]).to.equal(sheet.keyedRules.div);
-		expect(sheet.getRule('div')).to.deep.equal({
+		expect({...sheet.getRule('div')}).to.deep.equal({
 			pos: -1,
 			hash: '',
 			rule: {color: 'red'},
@@ -25,7 +25,7 @@ describe('stylesheet API', () => {
 
 		expect(sheet).to.have.length(2);
 		expect(sheet.rules).to.deep.equal([sheet.keyedRules.div, sheet.keyedRules.span]);
-		expect(sheet.getRule('span')).to.deep.equal({
+		expect({...sheet.getRule('span')}).to.deep.equal({
 			pos: -1,
 			hash: '',
 			className: 'c-span',
@@ -43,7 +43,7 @@ describe('stylesheet API', () => {
 
 		expect(sheet).to.have.length(1);
 		expect(sheet.rules[0]).to.equal(sheet.keyedRules.div);
-		expect(sheet.getRule('div')).to.deep.equal({
+		expect({...sheet.getRule('div')}).to.deep.equal({
 			pos: 1,
 			hash: '',
 			className: 'c-div',
@@ -70,7 +70,7 @@ describe('stylesheet API', () => {
 		sheet.deleteRule('div');
 		expect(sheet).to.have.length(1);
 		expect(sheet.rules[0]).to.equal(sheet.keyedRules.span);
-		expect(sheet.getRule('span')).to.deep.equal({
+		expect({...sheet.getRule('span')}).to.deep.equal({
 			pos: -1,
 			hash: '',
 			className: 'c-span',
@@ -88,7 +88,7 @@ describe('stylesheet API', () => {
 	// 	sheet.editRule('div', {background: 'blue'});
 
 	// 	expect(sheet).to.have.length(1);
-	// 	expect(sheet.getRule('div')).to.deep.equal({
+	// 	expect({...sheet.getRule('div')}).to.deep.equal({
 	// 		pos: -1,
 	// 		className: 'c-div',
 	// 		rule: {color: 'red', background: 'blue'},
@@ -104,7 +104,7 @@ describe('stylesheet API', () => {
 	// 	sheet.replaceRule('div', {background: 'blue'});
 
 	// 	expect(sheet).to.have.length(1);
-	// 	expect(sheet.getRule('div')).to.deep.equal({
+	// 	expect({...sheet.getRule('div')}).to.deep.equal({
 	// 		pos: -1,
 	// 		className: 'c-div',
 	// 		rule: {background: 'blue'},

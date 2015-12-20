@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "detect-node": "^2.0.3",
+    "hooks": "^0.3.2",
     "hyphenate-style-name": "^1.0.0",
     "postcss-js": "^0.1.0",
     "reactribute": "^0.1.18",

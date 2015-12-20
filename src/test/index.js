@@ -5,9 +5,8 @@ import ReactDOM from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import TestUtils from 'react-addons-test-utils';
 import {jsdom} from 'jsdom';
-
-import {clearCache as clearDOMStylesheetCache} from '../get-dom-stylesheet';
-import {clearCache as clearStylesheetManagerCache} from '../get-stylesheet-manager';
+import {clearCache as clearDOMStylesheetCache} from '../stylesheet-manager/get-dom-stylesheet';
+import {clearCache as clearStylesheetManagerCache} from '../stylesheet-manager/get-stylesheet-manager';
 
 import postcssJs from 'postcss-js';
 import autoprefixer from 'autoprefixer';
@@ -59,7 +58,6 @@ describe('react-stylesheets', () => {
 	});
 
 	it('should enhance a react component with a parser', () => {
-
 		const createStylesheetWithParser = createStylesheet.create({
 			parser: postcssJs.sync([ nested, autoprefixer({ browsers: ['> 1%', 'IE 9']}) ])
 		});
@@ -126,6 +124,44 @@ describe('react-stylesheets', () => {
 		const styleString = getStyleStringFromDecorator(decorator);
 		expect(styleString).to.include(className);
 
+	});
+
+	it('should compose classes', () => {
+
+
+		const styles = {
+			div: {
+				backgroundColor: 'red',
+				color: 'blue'
+			},
+			span: {
+				':composes': 'div',
+				color: 'red'
+			},
+			h1: {
+				color: 'red'
+			}
+		};
+
+		const decorator = createStylesheet(styles);
+
+		@decorator
+		class Test extends React.Component {
+			render() {
+				return <div><span ref="span"/><h1>!</h1></div>;
+			}
+		}
+
+		const instance = TestUtils.renderIntoDocument(<Test/>);
+
+		const divNode = ReactDOM.findDOMNode(instance);
+		expect(divNode.className).to.equal(decorator.stylesheetManager.rules[0].className);
+
+		const spanNode = instance.refs.span;
+		expect(spanNode.className.match(/span|div/g)).to.have.length(2);
+		const styleString = getStyleStringFromDecorator(decorator);
+		expect(styleString.match(/span|div/g)).to.have.length(2);
+		expect(styleString).to.not.include('compose');
 	});
 
 });

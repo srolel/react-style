@@ -1,7 +1,8 @@
-import EventEmitter from 'tiny-emitter';
-import Rule from './style-rule.js';
+import getRule from '../rule/get-style-rule.js';
+import Rule from '../rule/style-rule';
+import Hooker from '../utils/hooker.js';
 
-export class Stylesheet extends EventEmitter {
+export class Stylesheet extends Hooker {
 	constructor({media, id, ...ruleOpts} = {}) {
 		super();
 		this.keyedRules = {};
@@ -23,7 +24,6 @@ export class Stylesheet extends EventEmitter {
 			delete this.keyedRules[id];
 			this.rules.splice(index, 1);
 		}
-		this.emit('deleteRule');
 		return this;
 	}
 
@@ -33,11 +33,10 @@ export class Stylesheet extends EventEmitter {
 
 	insertRule(sel, rule, pos = -1) {
 
-		const ruleObj = new Rule(sel, rule, pos, this.ruleOpts);
+		const ruleObj = getRule(sel, rule, pos, this.ruleOpts);
 
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;
-		this.emit('insertRule', ruleObj);
 		return this;
 	}
 
@@ -59,14 +58,21 @@ export class Stylesheet extends EventEmitter {
 	}
 
 	getRule(index) {
-		return this.keyedRules[index]
-			|| null;
+		if (typeof index === 'number') {
+			index = index >= 0 ? index : this.length + index;
+			return this.rules[index];
+		}
+
+		if (index instanceof Rule) {
+			return index;
+		}
+
+		return this.keyedRules[index];
 	}
 
 	editRule(index, newRule, replace) {
 		const rule = this.getRule(index);
 		rule.update(newRule, replace);
-		this.emit('editRule', rule);
 		return this;
 	}
 
