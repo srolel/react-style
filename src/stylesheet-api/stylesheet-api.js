@@ -6,7 +6,6 @@ export default class Stylesheet extends Hooker {
 	constructor({media, id, ...ruleOpts} = {}) {
 		super();
 		this.keyedRules = {};
-
 		this.rules = [];
 		this.media = media;
 		this.id = id;
@@ -34,7 +33,6 @@ export default class Stylesheet extends Hooker {
 	insertRule(sel, rule, pos = -1) {
 
 		const ruleObj = getRule(sel, rule, pos, this.ruleOpts);
-
 		this.rules.push(ruleObj);
 		this.keyedRules[sel] = ruleObj;
 		return this;

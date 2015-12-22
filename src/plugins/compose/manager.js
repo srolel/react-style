@@ -2,9 +2,9 @@ export default Manager => {
 
 	let isCached, className;
 
-	Manager.pre('insertRule', function(next, rule) {
+	Manager.hook('insertRule', function(next, rule, opts) {
 		const isCached = this.getCachedRule(rule.hash);
-		next();
+		next(rule, opts);
 		return rule.getComposedClassName();
 	});
 
