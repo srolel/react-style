@@ -1,7 +1,10 @@
+import Hooker from '../utils/hooker.js';
+
+
 /**
  * Manages the browser stylesheet elements and server style strings
  */
-export default class StylesheetManager {
+export default class StylesheetManager extends Hooker {
 
 	static defaultOpts = {
 		append: false,
@@ -16,6 +19,7 @@ export default class StylesheetManager {
      */
 
 	constructor(DOMStyleElement, opts) {
+		super();
 		this.DOMStyleElement = DOMStyleElement;
 		this.opts = {...StylesheetManager.defaultOpts, ...opts};
 		this.ruleLengthCache = {};
@@ -49,14 +53,12 @@ export default class StylesheetManager {
 
 		// TODO: make this kind of thing middleware?
 		let className;
-		if (cachedRule) {
-			className = cachedRule.incSpec(rule.className);
-		} else {
+		if (!cachedRule) {
 			this.keyedRules[rule.hash] = rule;
-			className = rule.className;
+			// className = cachedRule.incSpec(rule.className);
 		}
 
-		return className;
+		return rule.className;
 	}
 
 	appendToDOM(rule) {

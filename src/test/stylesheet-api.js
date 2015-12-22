@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import getStylesheet from '../stylesheet-api/stylesheet-api.js';
+import {getStylesheet} from '../stylesheet-api/create-stylesheet.js';
 
 // TODO: these tests are old and semi-deprecated.
 // invalid tests that test capabilities that were deprecated are commended out.

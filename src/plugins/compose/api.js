@@ -1,8 +1,8 @@
-export default styleSheet => {
+export default StylesheetApi => {
 
 	let toCompose;
 
-	styleSheet.pre('insertRule', function(next, sel, rule) {
+	StylesheetApi.pre('insertRule', function(next, sel, rule) {
 		const composes = rule[':composes'];
 		if (composes) {
 			delete rule[':composes'];
@@ -13,7 +13,7 @@ export default styleSheet => {
 		next();
 	});
 
-	styleSheet.post('insertRule', function(next, sel, rule) {
+	StylesheetApi.post('insertRule', function(next, sel, rule) {
 		if (toCompose) {
 			this.getRule(-1).compose(toCompose);
 		}

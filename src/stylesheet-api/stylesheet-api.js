@@ -2,7 +2,7 @@ import getRule from '../rule/get-style-rule.js';
 import Rule from '../rule/style-rule';
 import Hooker from '../utils/hooker.js';
 
-export class Stylesheet extends Hooker {
+export default class Stylesheet extends Hooker {
 	constructor({media, id, ...ruleOpts} = {}) {
 		super();
 		this.keyedRules = {};
@@ -80,9 +80,3 @@ export class Stylesheet extends Hooker {
 		return this.editRule(...args, true);
 	}
 }
-
-let numStylesheets = 0;
-
-export default (opts) => {
-	return new Stylesheet({id: numStylesheets++, ...opts});
-};

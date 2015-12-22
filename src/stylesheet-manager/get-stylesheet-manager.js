@@ -1,5 +1,8 @@
 import StylesheetManager from './stylesheet-manager';
 import getDOMStylesheet from './get-dom-stylesheet';
+import {applyPlugins} from '../plugins/index';
+
+applyPlugins.manager(StylesheetManager);
 
 export let stylesheetManagerCache = {};
 

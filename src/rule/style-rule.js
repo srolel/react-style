@@ -21,12 +21,6 @@ export default class Rule extends Hooker {
         extend(this, {rule, pos, sel, className, hash, spec});
     }
 
-    // get className() {
-    //     return this.composed
-    //         ? this.composed.concat(this.className).join(' ')
-    //         : this.className;
-    // }
-
     // increase specificity and return the added specific className
     incSpec(className) {
         this.classList = this.classList || [this.className];
@@ -39,12 +33,6 @@ export default class Rule extends Hooker {
         this.classList.push(className);
 
         return className;
-    }
-
-    compose(rule) {
-        this.composed = this.composed || [];
-        const className = rule.className || rule;
-        this.composed.push(className);
     }
 
     stringify(parser) {
