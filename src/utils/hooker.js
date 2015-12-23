@@ -1,4 +1,8 @@
-export default function Hooker() {}
+export default function Hooker() {
+	this.construct();
+}
+
+Hooker.prototype.construct = function() {};
 
 const wrap = (fn, wrapper) => function(...args) {
     return wrapper.call(this, fn.bind(this), ...args);
