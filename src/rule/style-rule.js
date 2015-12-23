@@ -7,7 +7,7 @@ import Hooker from '../utils/hooker';
 export default class Rule extends Hooker {
     constructor(sel, rule ,pos = -1, opts = {}) {
         super();
-        let className, hash, spec = 0;
+        let className, hash;
         if (opts.global) {
             className = sel.replace('.', '');
         } else {
@@ -18,22 +18,9 @@ export default class Rule extends Hooker {
             }
         }
 
-        extend(this, {rule, pos, sel, className, hash, spec});
+        extend(this, {rule, pos, sel, className, hash});
     }
 
-    // increase specificity and return the added specific className
-    incSpec(className) {
-        this.classList = this.classList || [this.className];
-
-        if (this.classList.indexOf(className) > -1) {
-            this.spec++;
-            className = className + this.spec;
-        }
-
-        this.classList.push(className);
-
-        return className;
-    }
 
     stringify(parser) {
         if (!this._parsed) {
