@@ -1,14 +1,13 @@
 export default Rule => {
-	Rule.prototype.incSpec = function(className) {
-        this.classList = this.classList || [this.className];
+	Rule.prototype.compose = function(rule) {
+		this.composed = this.composed || [];
+        const className = rule.className || rule;
+        this.composed.push(className);
+	};
 
-        if (this.classList.indexOf(className) > -1) {
-            this.spec++;
-            className = className + this.spec;
-        }
-
-        this.classList.push(className);
-
-        return className;
-    }
+	Rule.prototype.getComposedClassName = function() {
+		return this.composed
+            ? this.composed.concat(this.className).join(' ')
+            : this.className;
+    };
 };
