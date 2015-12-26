@@ -28,6 +28,7 @@ const reactStyles = (styles, opts = {}) => {
 		className: stylesheetManager.insertRule(rule)
 	}));
 
+	// use experimental babel plugin to replace calls to reactStyles with the resulting classNames.
 	if (opts.renderServerStyles) {
 		serverSideRenderTransform(rules);
 	}
@@ -53,12 +54,14 @@ const reactStyles = (styles, opts = {}) => {
 
 reactStyles.config = opts => reactStyles.opts = opts;
 
+// for server-side rendering etc.
 reactStyles.getSheetsAsString = () =>
 	Object.keys(stylesheetManagerCache)
 		.map(media =>
 			stylesheetManagerCache[media].DOMStyleElement.outerHTML)
 		.join('');
 
+// options mixin
 reactStyles.create = instanceOpts =>
 	(styles, opts) =>
 		reactStyles(styles, {...instanceOpts, ...opts});
