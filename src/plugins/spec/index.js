@@ -1,3 +1,3 @@
-// export {default as api} from './api';
-export {default as rule} from './rule';
-export {default as manager} from './manager';
+// export api from './api';
+export rule from './rule';
+export manager from './manager';

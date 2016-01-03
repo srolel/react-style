@@ -13,9 +13,9 @@ const stringifyStyleObject = styleObj => {
 const isMedia = str => str.indexOf('@') === 0;
 
 const stringifyStyle = rule =>
-	Object.keys(rule).map(k => 
+	Object.keys(rule).map(k =>
 		`${k} {
-			${isMedia(k) 
+			${isMedia(k)
 				? stringifyStyle(rule[k])
 				: stringifyStyleObject(rule[k])}
 		}`).join('');

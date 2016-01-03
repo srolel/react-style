@@ -1,19 +1,24 @@
-import createStylesheet from './src/index';
+import fs from 'fs';
+import Promise from 'bluebird';
+import * as babel from 'babel-core';
+import _ from 'lodash';
+import plugin from './babel-transform';
 
-import './src/__transform-code.js';
+Promise.promisifyAll(fs);
+Promise.promisifyAll(babel);
 
-createStylesheet.config({
-	renderServerStyles: true
-});
-
-const decorator = createStylesheet({
-	div: {
-		color: 'red'
+const compile = async () => {
+	try {
+		const fileName = 'babel-test.js';
+		const transformed = await babel.transformFileAsync(fileName, {
+			plugins: [[plugin, {
+				module: './src/index'
+			}]]
+		});
+		console.log(transformed.code)
+	} catch(e) {
+		console.error(e);
 	}
-});
+};
 
-const decorator2 = createStylesheet({
-	div: {
-		color: 'red'
-	}
-});
+compile();

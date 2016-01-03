@@ -1,7 +1,6 @@
 import createStylesheet from './stylesheet-api/create-stylesheet.js';
 import getStylesheetManager, {stylesheetManagerCache} from './stylesheet-manager/get-stylesheet-manager';
 import reactribute from 'reactribute';
-import serverSideRenderTransform from './utils/server-side-render-transform.js';
 
 const checkOpts = opts => {
 	if (opts.media) {
@@ -10,27 +9,45 @@ const checkOpts = opts => {
 	return opts;
 };
 
-// possible opts: {media, scope, global}
+// possible opts: {media, scope, global, renderServerStyles}
 
-const reactStyles = (styles, opts = {}) => {
+const getStylesAndClassNames = styleObj => {
+	const classNames = [], styles = {};
+	for (let key in styleObj) {
+		const value = styleObj[key];
+		if (typeof value === 'string') {
+			classNames.push({
+				sel: key,
+				className: value
+			});
+		} else {
+			styles[key] = value;
+		}
+	}
+	return {classNames, styles};
+};
+
+const reactStyles = (styleObj, opts = {}) => {
 
 
 	opts = {...reactStyles.opts, ...checkOpts(opts)};
+	const {styles, classNames} = getStylesAndClassNames(styleObj);
 
 	const stylesheetManager = getStylesheetManager(opts);
 	const stylesheet = createStylesheet(styles, opts);
-
 	stylesheet.addRules(styles);
 
-	const rules = stylesheet.rules.map(rule => ({
-		hash: rule.hash,
-		sel: rule.sel,
-		className: stylesheetManager.insertRule(rule)
-	}));
+	const rules = stylesheet.rules
+		.map(rule => ({
+			hash: rule.hash,
+			sel: rule.sel,
+			className: stylesheetManager.insertRule(rule)
+		}))
+		.concat(classNames);
 
 	// use experimental babel plugin to replace calls to reactStyles with the resulting classNames.
 	if (opts.renderServerStyles) {
-		serverSideRenderTransform(rules);
+		return rules;
 	}
 
 	const decorator = reactribute(rules.map(r => ({
@@ -40,7 +57,9 @@ const reactStyles = (styles, opts = {}) => {
 		},
 		fn({props}) {
 			// add to DOM here, where we know we are rendering it
-			stylesheetManager.appendToDOM(r.hash);
+			if (r.hash) {
+				stylesheetManager.appendToDOM(r.hash);
+			}
 			const className = props.className || '';
 			props = {...props, className: `${className} ${r.className}`.trim()};
 			return {props};

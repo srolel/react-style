@@ -25,9 +25,6 @@ export default class StylesheetManager extends Hooker {
 		this.ruleLengthCache = {};
 		this.rules = [];
 		this.keyedRules = {};
-		this.insertRule = this.insertRule.bind(this);
-		this.deleteRule = this.deleteRule.bind(this);
-		this.editRule = this.editRule.bind(this);
 	}
 
 	getCachedRule(id) {
@@ -63,7 +60,7 @@ export default class StylesheetManager extends Hooker {
 
 	appendToDOM(rule) {
 		rule = this.getCachedRule(rule);
-		if (!rule.appended) {
+		if (!rule || !rule.appended) {
 			rule.parse(this.opts.parser);
 			rule.appendTo(this.DOMStyleElement);
 		}

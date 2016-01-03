@@ -164,4 +164,30 @@ describe('react-stylesheets', () => {
 		expect(styleString).to.not.include('compose');
 	});
 
+	it('should apply strings as classNames directly (for server side rendering)', () => {
+
+
+		const styles = {
+			div: 'foo',
+			span: 'bar'
+		};
+
+		const decorator = createStylesheet(styles);
+
+		@decorator
+		class Test extends React.Component {
+			render() {
+				return <div><span ref="span"/></div>;
+			}
+		}
+
+		const instance = TestUtils.renderIntoDocument(<Test/>);
+
+		const divNode = ReactDOM.findDOMNode(instance);
+		const spanNode = instance.refs.span;
+
+		expect(divNode.className).to.equal(styles.div);
+		expect(spanNode.className).to.equal(styles.span);
+	});
+
 });
