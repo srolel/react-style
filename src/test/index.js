@@ -158,7 +158,7 @@ describe('react-stylesheets', () => {
 		expect(divNode.className).to.equal(decorator.stylesheetManager.rules[0].className);
 
 		const spanNode = instance.refs.span;
-		expect(spanNode.className.match(/span|div/g)).to.have.length(2);
+		expect(spanNode.className.match(/span|div/g)).to.have.length(2); // span has both div and span classes
 		const styleString = getStyleStringFromDecorator(decorator);
 		expect(styleString.match(/span|div/g)).to.have.length(2);
 		expect(styleString).to.not.include('compose');
@@ -188,6 +188,28 @@ describe('react-stylesheets', () => {
 
 		expect(divNode.className).to.equal(styles.div);
 		expect(spanNode.className).to.equal(styles.span);
+	});
+
+	it('should accept arrays as rules (fallbacks etc.)', () => {
+		const styles = {
+			div: {
+				color: ['red', 'blue']
+			}
+		};
+
+		const decorator = createStylesheet(styles);
+
+		@decorator
+		class Test extends React.Component {
+			render() {
+				return <div/>;
+			}
+		}
+		const instance = TestUtils.renderIntoDocument(<Test/>);
+		const node = ReactDOM.findDOMNode(instance);
+		expect(node.className).to.equal(decorator.stylesheetManager.rules[0].className);
+		const styleString = getStyleStringFromDecorator(decorator).replace(/[\s\r\n]*/g, '');
+		expect(styleString).to.include('div{color:red;color:blue;}');
 	});
 
 });

@@ -1,23 +1,48 @@
 import hyphenateStyleName from 'hyphenate-style-name';
 
-const stringifyStyleObject = styleObj => {
+const hyphenate = ruleName => style => hyphenateStyleName(ruleName) + ':' + style;
 
-	let styles = Object.keys(styleObj)
-		.map(k => hyphenateStyleName(k) + ':' + styleObj[k])
-		.join(';');
+const stringifyStyleWithArray = (ruleName, styles) => {
+	const hyphenateRule = hyphenate(ruleName);
 
-	styles = styles ? styles + ';' : '';
-	return styles;
+	if (!Array.isArray(styles)) {
+		return hyphenateRule(styles) + ';';
+	}
+
+	let ret = '';
+	const keys = Object.keys(styles);
+	for (let i = 0, len = keys.length; i < len; i++) {
+		const k = keys[i];
+		ret += hyphenateRule(styles[k]) + ';';
+	}
+
+	return ret;
+};
+
+const stringifyStyleObject = styles => {
+	const keys = Object.keys(styles);
+	let ret = '';
+	for (let i = 0, len = keys.length; i < len; i++) {
+		const k = keys[i];
+		ret += stringifyStyleWithArray(k, styles[k]);
+	}
+	return ret;
 };
 
 const isMedia = str => str.indexOf('@') === 0;
 
-const stringifyStyle = rule =>
-	Object.keys(rule).map(k =>
-		`${k} {
+const stringifyStyle = rule => {
+	const keys = Object.keys(rule);
+	let ret = '';
+	for (let i = 0, len = keys.length; i < len; i++) {
+		const k = keys[i];
+		ret += `${k} {
 			${isMedia(k)
 				? stringifyStyle(rule[k])
 				: stringifyStyleObject(rule[k])}
-		}`).join('');
+		}`;
+	}
+	return ret;
+};
 
 export default stringifyStyle;

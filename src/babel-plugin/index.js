@@ -1,11 +1,28 @@
-import createStylesheet from './src/index';
+import createStylesheet from '../index';
 import _ from 'lodash';
 
 const defaultModuleName = 'react-stylesheets';
+const defaultTagName = 'reactStyle.*';
 
 export default ({types: t}) => {
 
-	const stringTagMatcher = str => str.match(/reactStyle.*/);
+	const isStringOrMatchesRegexp = (str, matcher) => {
+		if (str === matcher) {
+			return true;
+		}
+
+		const matcherRegex = new RegExp(matcher);
+
+		if (matcherRegex.test(str)) {
+			return true;
+		}
+
+		return false;
+	};
+
+	const isTheModule = (str, matcher = defaultModuleName) => isStringOrMatchesRegexp(str, matcher);
+
+	const isTheTag = (str, matcher = defaultTagName) => isStringOrMatchesRegexp(str, matcher);
 
 	const replaceRulesWithClassNames = (path, rules) =>
 		path.replaceWith(t.objectExpression(
@@ -63,9 +80,9 @@ export default ({types: t}) => {
 		visitor: {
 			ImportDeclaration(path, state) {
 
-				const moduleName = state.opts.module || defaultModuleName
-;
-				if (path.get('source.value').node === moduleName) {
+				const moduleName = path.get('source.value').node;
+
+				if (isTheModule(moduleName, state.opts.module)) {
 					const specifiers = path.get('specifiers');
 					const defaultSpecifier = _.find(specifiers, spec => spec.isImportDefaultSpecifier());
 					const name = defaultSpecifier.get('local.name').node;
@@ -73,10 +90,10 @@ export default ({types: t}) => {
 				}
 			},
 
-			ExpressionStatement(path) {
+			ExpressionStatement(path, state) {
 				const expression = path.get('expression');
 				if (expression.isStringLiteral() &&
-					stringTagMatcher(expression.node.value)) {
+					isTheTag(expression.node.value, state.opts.tag)) {
 
 					const ruleObjectPath = getNextNodePath(path).get('init');
 

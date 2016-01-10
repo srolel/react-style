@@ -1,6 +1,8 @@
 import createStylesheet from './stylesheet-api/create-stylesheet.js';
 import getStylesheetManager, {stylesheetManagerCache} from './stylesheet-manager/get-stylesheet-manager';
 import reactribute from 'reactribute';
+import transformClassname from './transform-classname';
+import transformStyle from './transform-style';
 
 const checkOpts = opts => {
 	if (opts.media) {
@@ -8,6 +10,8 @@ const checkOpts = opts => {
 	}
 	return opts;
 };
+
+const compose = (...fns) => arg => fns.reduce((result, fn) => fn(result), arg);
 
 // possible opts: {media, scope, global, renderServerStyles}
 
@@ -50,7 +54,7 @@ const reactStyles = (styleObj, opts = {}) => {
 		return rules;
 	}
 
-	const decorator = reactribute(rules.map(r => ({
+	const transform = reactribute(rules.map(r => ({
 		matcher: ({key, type, props}) => {
 			return r.sel === type
 				|| props.className && props.className.split(' ').indexOf(r.sel) > -1;
@@ -65,6 +69,8 @@ const reactStyles = (styleObj, opts = {}) => {
 			return {props};
 		}
 	})));
+
+	const decorator = compose(transformClassname, transformStyle, transform);
 
 	decorator.stylesheet = stylesheet;
 	decorator.stylesheetManager = stylesheetManager;
