@@ -1,0 +1,2 @@
+add dot to classes
+hot reload + appended = no class change in stylesheet on reload

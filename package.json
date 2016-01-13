@@ -44,7 +44,7 @@
     "hooks": "^0.3.2",
     "hyphenate-style-name": "^1.0.0",
     "postcss-js": "^0.1.0",
-    "reactribute": "^0.1.18",
+    "reactribute": "^0.3.2",
     "tiny-emitter": "^1.0.1"
   }
 }

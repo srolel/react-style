@@ -122,7 +122,7 @@ describe('react-stylesheets', () => {
 		expect(divNode.className).to.equal(classList[0]);
 		expect(spanNode.className).to.equal(classList[1]);
 		const styleString = getStyleStringFromDecorator(decorator);
-		expect(styleString).to.include(className);
+		className.split(',').forEach(c => expect(styleString).to.include(`.${c}`));
 
 	});
 

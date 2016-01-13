@@ -9,6 +9,7 @@ export default Rule => {
 
         if (this.classList.indexOf(className) > -1) {
             this.spec++;
+			this.appended = false;
             className = className + this.spec;
         }
 
