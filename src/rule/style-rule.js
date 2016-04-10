@@ -1,7 +1,6 @@
 import appendCssRuleToDom from './append-css-rule-to-dom';
 import stringifyRule from './stringify-style';
 import objectHash from './object-hash';
-import extend from 'lodash/object/assign';
 import Hooker from '../utils/hooker';
 
 export default class Rule extends Hooker {
@@ -18,7 +17,7 @@ export default class Rule extends Hooker {
             }
         }
 
-        extend(this, {rule, pos, sel, className, hash});
+        Object.assign(this, {rule, pos, sel, className, hash});
     }
 
 
@@ -41,7 +40,7 @@ export default class Rule extends Hooker {
     }
 
     parse(parser) {
-        
+
         const ruleToParse = this.getRuleToParse();
 
         this._parsed = parser ? parser(ruleToParse) : ruleToParse;
