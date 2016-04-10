@@ -31,7 +31,9 @@ const stringifyStyleObject = styles => {
 
 const isMedia = str => str.indexOf('@') === 0;
 
-const addClassDot = k => k.split(/,\s*/).map(x => '.' + x).join(',');
+const addClassDot = k => isMedia(k)
+	? k
+	: k.split(/,\s*/).map(x => '.' + x).join(',');
 
 const stringifyStyle = rule => {
 	const keys = Object.keys(rule);
